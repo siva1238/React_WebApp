@@ -3,8 +3,17 @@
     padding: 60px 0;
   }
 
-  .Login form {
+  .Login {
     margin: 0 auto;
     max-width: 320px;
+  }
+  .Login button {
+    width: 100%;
+    margin-top: 20px;
+  }
+  .error {
+    margin-left: 5px;
+    font-size: 13px;
+    color: red;
   }
 }

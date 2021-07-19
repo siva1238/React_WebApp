@@ -13,11 +13,16 @@ exports.getAddProduct = (req, res, next) => {
 };
 
 exports.postAddProduct = (req, res, next) => {
+  console.log(req.file);
   const name = req.body.name;
-  const imageUrl = req.body.imageUrl;
   const price = req.body.price;
   const expiryDate = req.body.expiryDate;
-  console.log(req.user);
+  let imageUrl = req.file.path.replace("\\", "/"); //replace \\ with \ ; windows doesn't recognize he format
+  if (!imageUrl) {
+    const error = new Error("No file picked.");
+    error.statusCode = 422;
+    throw error;
+  }
   const product = new Product({
     name: name,
     price: price,

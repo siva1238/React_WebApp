@@ -39,7 +39,7 @@ app.use(
 );
 app.use("/images", express.static(path.join(__dirname, "images")));
 
-//set header to response to avoid cors error
+//set headers to response to avoid cors error
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
   res.setHeader(

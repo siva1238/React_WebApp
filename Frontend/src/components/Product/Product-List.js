@@ -24,6 +24,7 @@ const Products = () => {
         return res.json();
       })
       .then((resData) => {
+        console.log(resData.products);
         setProduct(resData.products);
       })
       .catch((err) => {

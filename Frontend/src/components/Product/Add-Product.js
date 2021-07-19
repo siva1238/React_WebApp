@@ -1,4 +1,4 @@
-import React, { useRef, useContext } from "react";
+import React, { useRef, useContext, useState } from "react";
 import classes from "../../CSS/Add-Product.module.css";
 import { useHistory } from "react-router";
 import AuthContext from "../../store/auth-context";
@@ -10,21 +10,30 @@ const Product = () => {
   const amountRef = useRef();
   const dateRef = useRef();
   const authCtx = useContext(AuthContext);
+  const [file, setFile] = useState();
+
+  // On file select (from the pop up)
+  const onFileChange = (e) => {
+    // Update the state
+    setFile(e.target.files[0]);
+  };
 
   const handleProduct = (event) => {
     event.preventDefault();
+
+    const formData = new FormData();
+
+    formData.append("name", nameRef.current.value);
+    formData.append("price", amountRef.current.value);
+    formData.append("expiryDate", dateRef.current.value);
+    formData.append("userId", authCtx.userId);
+    formData.append("image", file);
+    console.log(file);
+
     fetch("http://localhost:8080/admin/add-product", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: nameRef.current.value,
-        price: amountRef.current.value,
-        expiryDate: dateRef.current.value,
-        imageUrl: "",
-        userId: authCtx.userId,
-      }),
+
+      body: formData,
     })
       .then((res) => {
         if (res.status === 422) {
@@ -51,6 +60,9 @@ const Product = () => {
     <section className={classes.auth}>
       <form onSubmit={handleProduct}>
         <h1>The Products Page</h1>
+        <div className={classes.control}>
+          <input type="file" onChange={onFileChange} />
+        </div>
         <div className={classes.control}>
           <label htmlFor="name">Name</label>
           <input type="name" id="name" required ref={nameRef} />

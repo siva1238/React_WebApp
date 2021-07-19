@@ -11,10 +11,33 @@ const Login = () => {
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
   const authCtx = useContext(AuthContext);
+  const [formIsValid, setFormIsValid] = useState(false);
+  const [emailError, setemailError] = useState("");
+  const [emailIsValid, setEmailIsValid] = useState();
+  const [passwordIsValid, setPasswordIsValid] = useState();
 
-  function validateForm() {
-    return email.length > 0 && password.length > 0;
-  }
+  const emailChangeHandler = (e) => {
+    setEmail(e.target.value);
+
+    setFormIsValid(e.target.value.includes("@") && password.trim().length > 3);
+  };
+
+  const passwordChangeHandler = (event) => {
+    setPassword(event.target.value);
+
+    setFormIsValid(email.includes("@") && event.target.value.trim().length > 3);
+  };
+
+  const validateEmailHandler = () => {
+    if (!email.includes("@")) {
+      setEmailIsValid(email.includes("@"));
+      setemailError("Enter correct Email");
+    }
+  };
+
+  const validatePasswordHandler = () => {
+    setPasswordIsValid(password.trim().length > 3);
+  };
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -34,30 +57,27 @@ const Login = () => {
       },
     })
       .then((res) => {
-        if (res.ok) {
-          return res.json();
-        } else {
-          return res.json().then((data) => {
-            let errorMessage = "Authentication failed!";
-            // if (data && data.error && data.error.message) {
-            //   errorMessage = data.error.message;
-            // }
-
-            throw new Error(errorMessage);
-          });
+        if (res.status === 422) {
+          throw new Error("Validation failed.");
         }
+        if (res.status !== 200 && res.status !== 201) {
+          console.log("Error!");
+          throw new Error("Could not authenticate you!");
+        }
+        return res.json();
       })
       .then((data) => {
         authCtx.login(data);
         history.replace("/home");
       })
       .catch((err) => {
+        console.log(err);
         alert(err.message);
       });
   }
 
   return (
-    <div className="Login">
+    <div className="Login col-md-4">
       <Form onSubmit={handleSubmit}>
         <Form.Group size="lg" controlId="email">
           <Form.Label>Email</Form.Label>
@@ -65,24 +85,27 @@ const Login = () => {
             autoFocus
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={emailChangeHandler}
+            onBlur={validateEmailHandler}
             ref={emailInputRef}
             required
             placeholder="Enter your Email"
           />
+          <span className="error">{emailError}</span>
         </Form.Group>
         <Form.Group size="lg" controlId="password">
           <Form.Label>Password</Form.Label>
           <Form.Control
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={passwordChangeHandler}
+            onBlur={validatePasswordHandler}
             ref={passwordInputRef}
             required
             placeholder="Enter your Password"
           />
         </Form.Group>
-        <Button block size="lg" type="submit" disabled={!validateForm()}>
+        <Button block size="lg" type="submit" disabled={!formIsValid}>
           Login
         </Button>
       </Form>

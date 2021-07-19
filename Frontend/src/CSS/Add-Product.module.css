@@ -70,3 +70,8 @@
   background-color: transparent;
   color: #ae82cc;
 }
+.product-cart {
+  height: 18rem;
+  width: 18rem;
+  margin: 0 auto;
+}

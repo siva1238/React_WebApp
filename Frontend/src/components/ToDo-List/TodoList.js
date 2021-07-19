@@ -9,11 +9,15 @@ function TodoList() {
     if (!todo.text || /^\s*$/.test(todo.text)) {
       return;
     }
-
-    const newTodos = [todo, ...todos];
-
-    setTodos(newTodos);
-    console.log(...todos);
+    //don't add if already available in list
+    const isExist = todos.some((ele) => {
+      return ele.text == todo.text;
+    });
+    console.log(isExist);
+    if (!isExist) {
+      const newTodos = [todo, ...todos];
+      return setTodos(newTodos);
+    }
   };
 
   const completeTodo = (id) => {

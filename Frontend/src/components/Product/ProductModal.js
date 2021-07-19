@@ -5,6 +5,8 @@ const ProductDialog = (props) => {
   const [show, setShow] = useState(true);
   const [modelData, setModelData] = useState(props.modelData);
 
+  let path = "http://localhost:8080/" + `${modelData.imageUrl}`;
+
   const handleClose = () => {
     setShow(false);
     props.closeModelHandler();
@@ -22,7 +24,11 @@ const ProductDialog = (props) => {
           <Modal.Title></Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <img src={modelData.image}></img>
+          <img
+            src={path}
+            className="card-img-top"
+            alt="Image is not available"
+          />
 
           <p> Title: {modelData.name}</p>
           <p>Price: {modelData.price}</p>
